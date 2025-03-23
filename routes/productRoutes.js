@@ -1,17 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const Product = require("../models/product.js"); // Correct path to the Product model
+const Product = require("../models/product.js");
 
-// Route to get all products
-router.get("/", async (req, res) => {
-	try {
-		const products = await Product.find({}).limit(2); // Limiting to 10 products
-		console.log(products);
-		res.status(200).json(products);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
+// Middleware to validate JSON
+const validateJSON = (err, req, res, next) => {
+	if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+		return res.status(400).json({
+			error: "Invalid JSON format. Please ensure all property names are in double quotes.",
+		});
 	}
-});
+	next();
+};
+
+router.use(validateJSON);
 
 // Route to get all products by category and subcategory (query parameter)
 router.get("/filter", async (req, res) => {
@@ -21,13 +22,16 @@ router.get("/filter", async (req, res) => {
 
 		if (category) filter.category = category;
 		if (subcategory) filter.subcategory = subcategory;
-		console.log("Filter:", filter); // Log the filter object
+		// console.log("Filter:", filter); // Log the filter object
 
 		// Ensure database connection before querying
 		// if (!Product) {
 		// 	throw new Error("Product model is not available.");
 		// }
-		const products = await Product.find(filter);
+		const products = await Product.find(filter); // if (products.length === 0) {
+		// 	return res.status(404).json({ message: "No products found" });
+		// }
+
 		// if (products.length === 0) {
 		// 	return res.status(404).json({ message: "No products found" });
 		// }
@@ -38,26 +42,38 @@ router.get("/filter", async (req, res) => {
 	}
 });
 
-// // Route to get a single product by ID (route parameter)
-// router.get("/:id", async (req, res) => {
-// 	try {
-// 		const product = await Product.findById(req.params.id);
-// 		if (!product)
-// 			return res.status(404).json({ message: "Product not found" });
-// 		res.status(200).json(product);
-// 	} catch (err) {
-// 		res.status(500).json({ error: err.message });
-// 	}
-// });
+// Route to get a single product by ID (route parameter)
+router.get("/:id", async (req, res) => {
+	try {
+		// console.log("we have arrived");
+		const product = await Product.findById(req.params.id);
+		if (!product)
+			return res.status(404).json({ message: "Product not found" });
+		res.status(200).json(product);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+// Route to get all products (this should be last to avoid conflicts)
+router.get("/", async (req, res) => {
+	try {
+		const products = await Product.find({});
+		console.log(products);
+		res.status(200).json(products);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
 
 // // Route to create a new product
 // router.post("/", async (req, res) => {
-// 	try {
+//	try {
 // 		const newProduct = new Product(req.body);
 // 		const savedProduct = await newProduct.save();
 // 		res.status(201).json(savedProduct);
 // 	} catch (err) {
-// 		res.status(400).json({ error: err.message });
+//		res.status(400).json({ error: err.message });
 // 	}
 // });
 

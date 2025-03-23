@@ -62,5 +62,23 @@ const ProductSchema = new mongoose.Schema({
 		required: true,
 	},
 });
+//creating a Mongoose model for working with MongoDB collections.
 
-module.exports = mongoose.model("Products", ProductSchema, "Products");
+// First argument: "Products"
+
+// This is the name of the model in your application
+// When you use this model in your code, you'll reference it by this name
+// By convention, model names typically use singular form (e.g., "Product")
+
+// Second argument: ProductSchema
+
+// This is the schema object that defines the structure of documents in your collection
+// It defines the fields, their types, validation rules, etc.
+// This variable should be defined elsewhere in your code with fields like name, price, etc.
+
+// Third argument: "Products"
+
+// This optional argument specifies the actual MongoDB collection name to use
+// If omitted, Mongoose would automatically pluralize and lowercase the first argument
+// Here, it's explicitly setting the collection name to "Products"
+module.exports = mongoose.model("Product", ProductSchema, "Products");

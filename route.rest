@@ -5,3 +5,36 @@ GET http://localhost:3000/products/filter?category=Mobiles&subcategory=iPhones
 
 ###
 GET http://localhost:3000/products/filter?category=Mobiles
+
+###
+GET http://localhost:3000/products/67cfe4411d3eb582dacee834
+
+### 
+POST  http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "securepass"
+}
+
+###
+POST  http://localhost:3000/users/register
+Content-Type: application/json
+
+{
+  "fullName": "Harry Potter",
+  "email": "potterHarry@gmail.com",
+  "password": "abcd1234"
+}
+
+###
+POST  http://localhost:3000/users/logout
+Content-Type: application/json
+
+{
+  "refreshToken" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDdmY2VhMGExZDhiMTg4YTU5MTIwZSIsImlhdCI6MTc0MjI5Mjg4OSwiZXhwIjoxNzQyODk3Njg5fQ.4KPg_x54cH3sE87ks8jxMdEd3xnNX6qlAViwONv8Evg"
+}
+
+###
+POST http://localhost:3000/cart/

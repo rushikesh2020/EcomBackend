@@ -8,26 +8,35 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Enable CORS
-app.use(cors());
+app.use(
+	cors(
+		{
+			origin: function (origin, callback) {
+				// If no origin is provided (like in server-to-server requests), you might want to allow it
+				if (!origin) return callback(null, true);
+				// Reflect the origin back
+				return callback(null, origin);
+			},
+			credentials: true,
+		} // Allow cookies and authentication headers
+	)
+);
 
 // Middleware to parse JSON requests
 app.use(express.json());
 
-// Import and use the product routes
+// Import and use the routes
 const productRoutes = require("./routes/productRoutes");
+const userRoutes = require("./routes/userRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 app.use("/products", productRoutes);
+app.use("/users", userRoutes);
+app.use("/cart", cartRoutes);
+app.use("/orders", orderRoutes);
 
 // Connect to MongoDB
-connectDB()
-	.then(() => {
-		console.log("Connected to MongoDB");
-	})
-	.catch(err => {
-		console.error(err);
-		process.exit(1);
-	});
-
-app.use("/products", productRoutes);
+connectDB();
 
 // Start the server on the specified port
 app.listen(PORT, () => {
